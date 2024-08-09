@@ -1,9 +1,7 @@
-# Employee Leave Management App
+# LeaveLogic - Employee Leave Management App
 
-Welcome to the Employee Leave Management App, built with Kotlin, Jetpack Compose, and Firebase. This application provides a comprehensive solution for managing employee leave requests and profiles.
+Welcome to LeaveLogic, an Employee Leave Management App built with Kotlin, Jetpack Compose, and Firebase. This application provides a comprehensive solution for managing employee leave requests and profiles.
 
-**Contact me on:** +254796759850  
-**Email:** [ezraopande@gmail.com](mailto:ezraopande@gmail.com)
 
 ## Features
 
@@ -55,4 +53,17 @@ To get started with the app:
 
 1. **Clone the Repository**
    ```bash
-   git clone https://github.com/ezraopande/Leave-Management-App.git
+   git clone https://github.com/ezraopande/LeaveLogic.git
+
+
+
+## Contact
+
+For any questions or feedback, feel free to reach out to:
+
+- Email: ezraopande@gmail.com
+- Phone: +254796759850
+
+---
+
+*This project is maintained by [Ezra Opande](https://github.com/ezraopande).*
