@@ -1,0 +1,48 @@
+{
+  "project_info": {
+    "project_number": "630994652482",
+    "project_id": "leavemangmtapp-43ba0",
+    "storage_bucket": "leavemangmtapp-43ba0.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:630994652482:android:cb8dc9bb2e29a0977b8cdb",
+        "android_client_info": {
+          "package_name": "com.example.leavemangmtapp"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAcErhTbD-Id_uVtXdq075uLsUKCGxU5jE"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:630994652482:android:276ee9c59c155cd67b8cdb",
+        "android_client_info": {
+          "package_name": "com.leave.management"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAcErhTbD-Id_uVtXdq075uLsUKCGxU5jE"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
