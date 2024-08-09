@@ -59,7 +59,7 @@ To get started with the app:
 
 ## Contact
 
-For any collaborations, questions or feedback, feel free to reach out to:
+For collaborations, questions or feedback, feel free to reach out to:
 
 - Email: ezraopande@gmail.com
 - Phone: +254796759850
