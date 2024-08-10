@@ -68,6 +68,7 @@ import com.google.firebase.firestore.FirebaseFirestore
 import com.leave.management.R
 import com.leave.management.navigation.ROUTE_ADMINDASBOARD
 import com.leave.management.navigation.ROUTE_ADMINLOGIN
+import com.leave.management.navigation.ROUTE_EMPLOYEEDASHBOARD
 import com.leave.management.ui.screens.employee.EmployeeBottomBar
 
 @SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
@@ -141,7 +142,7 @@ fun AdminAccount(navController: NavHostController) {
                     Text(text = "Account", color = Color.White)
                 },
                 navigationIcon = {
-                    IconButton(onClick = {  }) {
+                    IconButton(onClick = { navController.navigate(ROUTE_ADMINDASBOARD) }) {
                         Icon(
                             painter = painterResource(id = R.drawable.home),
 
@@ -234,6 +235,11 @@ fun AdminAccount(navController: NavHostController) {
                           )
                           TextWithIcon(
                               label = "Mobile",
+                              value = userMobile,
+                              icon = Icons.Default.Phone
+                          )
+                          TextWithIcon(
+                              label = "Password",
                               value = userMobile,
                               icon = Icons.Default.Phone
                           )

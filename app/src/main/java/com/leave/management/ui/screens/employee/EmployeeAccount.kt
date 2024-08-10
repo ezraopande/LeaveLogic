@@ -50,6 +50,7 @@ import com.google.firebase.auth.EmailAuthProvider
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
 import com.leave.management.R
+import com.leave.management.navigation.ROUTE_EMPLOYEEDASHBOARD
 import com.leave.management.ui.screens.admin.logout
 
 
@@ -180,7 +181,9 @@ fun EmployeeAccount(navController: NavHostController) {
 
                 ) },
                 navigationIcon = {
-                    androidx.compose.material3.IconButton(onClick = { }) {
+                    androidx.compose.material3.IconButton(onClick = { navController.navigate(
+                        ROUTE_EMPLOYEEDASHBOARD
+                    )}) {
                         androidx.compose.material3.Icon(
                             painter = painterResource(id = R.drawable.home),
 
@@ -223,7 +226,7 @@ fun EmployeeAccount(navController: NavHostController) {
                 ) {
 
 
-                    Spacer(modifier = Modifier.height(80.dp))
+                    Spacer(modifier = Modifier.height(60.dp))
 
 
                     Card(
@@ -326,6 +329,7 @@ fun EmployeeAccount(navController: NavHostController) {
                     elevation = 8.dp,
                     modifier = Modifier
                         .fillMaxWidth()
+                        .padding(horizontal = 16.dp)
                         .clickable { showDialog = true }
                 ) {
                     Column(

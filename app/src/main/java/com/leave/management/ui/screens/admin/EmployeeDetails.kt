@@ -1,8 +1,11 @@
 package com.leave.management.ui.screens.admin
 
 import android.annotation.SuppressLint
+import android.content.Intent
+import android.net.Uri
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -19,6 +22,7 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.windowInsetsPadding
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material.AlertDialog
 import androidx.compose.material.Card
 import androidx.compose.material.CircularProgressIndicator
 import androidx.compose.material.Icon
@@ -32,6 +36,7 @@ import androidx.compose.material.icons.filled.CalendarToday
 import androidx.compose.material.icons.filled.Email
 import androidx.compose.material.icons.filled.LocationOn
 import androidx.compose.material.icons.filled.Phone
+import androidx.compose.material.icons.filled.Share
 import androidx.compose.material3.CenterAlignedTopAppBar
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.TopAppBarDefaults
@@ -48,8 +53,12 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.text.SpanStyle
+import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.text.font.FontStyle
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextDecoration
+import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
@@ -66,6 +75,10 @@ fun EmployeeDetailsScreen(email: String, navController: NavController) {
     var employee by remember { mutableStateOf<Employees?>(null) }
     var isLoading by remember { mutableStateOf(true) }
     var isError by remember { mutableStateOf(false) }
+    var showShareDialog by remember { mutableStateOf(false) }
+    val mContext = LocalContext.current
+    val Context = LocalContext.current
+
 
     LaunchedEffect(email) {
         try {
@@ -88,8 +101,13 @@ fun EmployeeDetailsScreen(email: String, navController: NavController) {
                     )
                         },
                 navigationIcon = {
-                    IconButton(onClick = { navController.popBackStack() }) {
-                        Icon(Icons.Filled.ArrowBack, contentDescription = "Back", tint = Color.White)
+                        IconButton(onClick = { navController.popBackStack() }) {
+                            Icon(Icons.Filled.ArrowBack, contentDescription = "Back", tint = Color.White)
+                        }
+                },
+                actions = {
+                    IconButton(onClick = { showShareDialog = true}) {
+                        Icon(Icons.Filled.Share, contentDescription = "Share Details with Employee", tint = Color.White)
                     }
                 },
                 colors = TopAppBarDefaults.centerAlignedTopAppBarColors(Color(0xff6f2dc2)),
@@ -190,6 +208,76 @@ fun EmployeeDetailsScreen(email: String, navController: NavController) {
                                 icon = Icons.Default.CalendarToday
                             )
                         }
+                    }
+
+                    //ShareEmployeeDetailsDialogue
+
+                    if (showShareDialog) {
+                        AlertDialog(
+                            onDismissRequest = { showShareDialog = false },
+                            modifier = Modifier.width(400.dp),
+                            title = { Text(text = "Share Employee Details") },
+                            text = {
+                                Column {
+                                    Text(buildAnnotatedString {
+                                        append("Share the login credentials with ")
+                                        withStyle(style = SpanStyle(fontWeight = FontWeight.Bold)) {
+                                            append(emp.name.uppercase())
+                                        }
+                                    })
+                                    Spacer(modifier = Modifier.height(15.dp))
+                                    Text(" You can share the details via Email or SMS.")
+                                }
+                            },
+                            confirmButton = {
+                                Row(
+                                    modifier = Modifier
+                                        .fillMaxWidth()
+                                        .padding(top = 8.dp),
+                                    horizontalArrangement = Arrangement.SpaceEvenly
+                                ) {
+                                    Text(
+                                        text = "VIA EMAIL",
+                                        color = Color.Blue,
+                                        textDecoration = TextDecoration.Underline,
+                                        modifier = Modifier.clickable {
+                                            val shareIntent = Intent(Intent.ACTION_SEND).apply {
+                                                type = "text/plain"
+                                                putExtra(Intent.EXTRA_EMAIL, arrayOf(emp.email))
+                                                putExtra(Intent.EXTRA_SUBJECT, "Welcome to the Company. You can now apply for leaves.")
+                                                putExtra(Intent.EXTRA_TEXT, "Hello ${emp.name},\n\nWelcome to the company. Here are your login credentials.\n\nEmail: ${emp.email}\nPassword: ${emp.password}")
+                                            }
+                                            mContext.startActivity(shareIntent)
+                                            showShareDialog = false
+                                        }
+                                    )
+                                    Spacer(modifier = Modifier.width(5.dp))
+                                    Text(
+                                        text = "VIA SMS",
+                                        color = Color.Blue,
+                                        textDecoration = TextDecoration.Underline,
+                                        modifier = Modifier.clickable {
+                                            val smsIntent = Intent(Intent.ACTION_SENDTO).apply {
+                                                data = Uri.parse("smsto:${emp.mobilenumber}")
+                                                putExtra("sms_body", "Hello ${emp.name}, these are your credentials: Email: ${emp.email}, Password: ${emp.password}")
+                                            }
+                                            mContext.startActivity(smsIntent)
+                                            showShareDialog = false
+                                        }
+                                    )
+                                    Spacer(modifier = Modifier.width(16.dp))
+                                    Text(
+                                        text = "CANCEL",
+                                        color = Color.Red,
+                                        textDecoration = TextDecoration.Underline,
+                                        modifier = Modifier.clickable {
+                                            showShareDialog = false
+                                        }
+                                    )
+                                }
+                            },
+                            dismissButton = {}
+                        )
                     }
                 }
             }

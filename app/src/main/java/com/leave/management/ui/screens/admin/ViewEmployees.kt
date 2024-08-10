@@ -71,7 +71,8 @@ data class Employees(
     val email: String = "",
     val mobilenumber: String = "",
     val name: String = "",
-    val image_url: String = ""
+    val image_url: String = "",
+    val password: String=""
 )
 
 

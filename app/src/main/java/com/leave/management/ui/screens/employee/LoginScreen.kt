@@ -21,6 +21,7 @@ import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
 import androidx.compose.material3.TextFieldDefaults
@@ -140,14 +141,13 @@ fun LoginScreen(navController: NavHostController) {
                     .padding(start = 20.dp),
                 shape = RoundedCornerShape(30.dp),
                 colors = ButtonDefaults.buttonColors(
-                    Color.Cyan, // Set button background color
-                    contentColor = Color.Black // Set button text color
+                    containerColor = Color(0xFF6650a4),
+                    contentColor = MaterialTheme.colorScheme.onPrimary
                 ),
-                border = BorderStroke(3.dp, Color.Black)
+                border = BorderStroke(3.dp, Color(0xFFEFB8C8))
             ) {
                 Text(
                     text = "Employee",
-                    color = Color.Black,
                     fontSize = 15.sp,
                     fontWeight = FontWeight.Bold
                 )
@@ -190,7 +190,7 @@ fun LoginScreen(navController: NavHostController) {
                     },
                     singleLine = true,
                     colors = TextFieldDefaults.textFieldColors(
-                        focusedIndicatorColor = Color.Cyan,
+                        focusedIndicatorColor = Color(0xFF6650a4),
                         containerColor = Color.Transparent
                     ),
                     keyboardOptions = KeyboardOptions(
@@ -209,7 +209,7 @@ fun LoginScreen(navController: NavHostController) {
                     },
                     singleLine = true,
                     colors = TextFieldDefaults.textFieldColors(
-                        focusedIndicatorColor = Color.Cyan,
+                        focusedIndicatorColor = Color(0xFF6650a4),
                         containerColor = Color.Transparent
                     ),
                     keyboardOptions = KeyboardOptions(
@@ -235,11 +235,11 @@ fun LoginScreen(navController: NavHostController) {
                     .padding(start = 20.dp)
                     .align(Alignment.CenterHorizontally),
                 shape = RoundedCornerShape(30.dp),
-                colors = ButtonDefaults.buttonColors(Color.Cyan)
+                colors = ButtonDefaults.buttonColors(containerColor = Color(0xFF6650a4),
+                    contentColor = MaterialTheme.colorScheme.onPrimary)
             ) {
                 Text(
                     text = "Login",
-                    color = Color.Black,
                     fontSize = 15.sp,
                     fontWeight = FontWeight.Bold
                 )

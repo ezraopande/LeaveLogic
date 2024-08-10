@@ -32,6 +32,7 @@ import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
 import androidx.compose.material3.TextFieldDefaults
@@ -109,10 +110,10 @@ fun AdminLoginScreen(navController: NavHostController) {
                     .padding(start = 20.dp),
                 shape = RoundedCornerShape(30.dp),
                 colors = ButtonDefaults.buttonColors(
-                    containerColor = Color.Cyan,
-                    contentColor = Color.Black
+                    containerColor = Color(0xFF6650a4),
+                    contentColor = MaterialTheme.colorScheme.onPrimary
                 ),
-                border = BorderStroke(3.dp, Color.Black)
+                border = BorderStroke(3.dp, Color(0xFFEFB8C8))
             ) {
                 Text(
                     text = "Admin",
@@ -179,7 +180,7 @@ fun AdminLoginScreen(navController: NavHostController) {
                     },
                     singleLine = true,
                     colors = TextFieldDefaults.textFieldColors(
-                        focusedIndicatorColor = Color.Cyan,
+                        focusedIndicatorColor = Color(0xff6f2dc2),
                         containerColor = Color.Transparent
                     ),
                     keyboardOptions = KeyboardOptions(
@@ -198,7 +199,7 @@ fun AdminLoginScreen(navController: NavHostController) {
                     },
                     singleLine = true,
                     colors = TextFieldDefaults.textFieldColors(
-                        focusedIndicatorColor = Color.Cyan,
+                        focusedIndicatorColor = Color(0xff6f2dc2),
                         containerColor = Color.Transparent
 
                     ),
@@ -259,11 +260,12 @@ fun AdminLoginScreen(navController: NavHostController) {
                     .padding(start = 20.dp)
                     .align(Alignment.CenterHorizontally),
                 shape = RoundedCornerShape(30.dp),
-                colors = ButtonDefaults.buttonColors(Color.Cyan)
+                colors = ButtonDefaults.buttonColors( containerColor = Color(0xFF6650a4),
+                    contentColor = MaterialTheme.colorScheme.onPrimary)
             ) {
                 Text(
                     text = "Login",
-                    color = Color.Black,
+//                    color = Color.Black,
                     fontSize = 15.sp,
                     fontWeight = FontWeight.Bold
                 )
@@ -282,7 +284,7 @@ fun AdminLoginScreen(navController: NavHostController) {
             Text(
                 text = "Register",
                 fontSize = 15.sp,
-                color = Color.Blue,
+                color = Color(0xFF7D5260),
                 fontWeight = FontWeight.Bold,
                 modifier = Modifier.clickable { navController.navigate(ROUTE_REGISTER) }
             )

@@ -34,6 +34,7 @@ import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
 import androidx.compose.material3.TextFieldDefaults
@@ -85,17 +86,17 @@ fun RegisterScreen(navController: NavHostController) {
                 Text(
                     text = "Create Admin Account",
                     fontWeight = FontWeight.Bold,
-                    color = Color.Black,
+                    color = Color.White,
                     fontSize = 19.sp,
-                    modifier = Modifier.padding(top = 10.dp)
+                    modifier = Modifier.padding(top = 3.dp)
                 )
             },
-            colors = TopAppBarDefaults.largeTopAppBarColors(Color.Cyan),
+            colors = TopAppBarDefaults.largeTopAppBarColors(Color(0xFF6650a4)),
             modifier = Modifier
                 .windowInsetsPadding(WindowInsets.systemBars),
             navigationIcon = {
                 IconButton(onClick = { navController.navigate(ROUTE_LOGIN) }) {
-                    Icon(imageVector = Icons.Filled.ArrowBack, contentDescription = "arrowback")
+                    Icon(imageVector = Icons.Filled.ArrowBack, contentDescription = "arrowback", tint = Color.White)
                 }
             }
         )
@@ -135,7 +136,7 @@ fun RegisterScreen(navController: NavHostController) {
                     },
                     singleLine = true,
                     colors = TextFieldDefaults.textFieldColors(
-                        focusedIndicatorColor = Color.Cyan,
+                        focusedIndicatorColor = Color(0xFF6650a4),
                         containerColor = Color.Transparent
                     )
                 )
@@ -149,7 +150,7 @@ fun RegisterScreen(navController: NavHostController) {
                     },
                     singleLine = true,
                     colors = TextFieldDefaults.textFieldColors(
-                        focusedIndicatorColor = Color.Cyan,
+                        focusedIndicatorColor = Color(0xFF6650a4),
                         containerColor = Color.Transparent
                     ),
                     keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Phone)
@@ -164,7 +165,7 @@ fun RegisterScreen(navController: NavHostController) {
                     },
                     singleLine = true,
                     colors = TextFieldDefaults.textFieldColors(
-                        focusedIndicatorColor = Color.Cyan,
+                        focusedIndicatorColor = Color(0xFF6650a4),
                         containerColor = Color.Transparent
                     ),
                     keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Email)
@@ -179,7 +180,7 @@ fun RegisterScreen(navController: NavHostController) {
                     },
                     singleLine = true,
                     colors = TextFieldDefaults.textFieldColors(
-                        focusedIndicatorColor = Color.Cyan,
+                        focusedIndicatorColor = Color(0xFF6650a4),
                         containerColor = Color.Transparent
                     ),
                     keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Password),
@@ -245,11 +246,11 @@ fun RegisterScreen(navController: NavHostController) {
                     .size(width = 150.dp, height = 50.dp)
                     .padding(start = 20.dp),
                 shape = RoundedCornerShape(30.dp),
-                colors = ButtonDefaults.buttonColors(Color.Cyan)
+                colors = ButtonDefaults.buttonColors(containerColor = Color(0xFF6650a4),
+                    contentColor = MaterialTheme.colorScheme.onPrimary)
             ) {
                 Text(
                     text = "Register",
-                    color = Color.Black,
                     fontSize = 15.sp,
                     fontWeight = FontWeight.Bold
                 )

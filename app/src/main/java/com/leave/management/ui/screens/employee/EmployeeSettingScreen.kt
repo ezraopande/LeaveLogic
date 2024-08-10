@@ -9,6 +9,7 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.WindowInsets
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
@@ -273,7 +274,7 @@ fun EmployeeSettingScreen(navController: NavHostController){
                 colors = TopAppBarDefaults.largeTopAppBarColors(Color(0xff6f2dc2)),
                 modifier = Modifier
                     .windowInsetsPadding(WindowInsets.systemBars)
-                    .height(48.dp)
+                    .height(56.dp)
             )
         },
         bottomBar = { EmployeeBottomBar(navController = navController) }
@@ -281,11 +282,11 @@ fun EmployeeSettingScreen(navController: NavHostController){
     { innerPadding ->
         Column(
             modifier = Modifier
-                .padding(innerPadding),
+                .padding(innerPadding)
+                .padding(0.dp),
             verticalArrangement = Arrangement.spacedBy(16.dp),
         ) {
             //Loggedin Employee Profile
-
 
             Card (colors = CardDefaults.cardColors(
                 containerColor = Color.White,
@@ -294,7 +295,8 @@ fun EmployeeSettingScreen(navController: NavHostController){
                     defaultElevation = 6.dp),
                 modifier = Modifier
                     .padding(start = 7.dp)
-                    .size(width = 400.dp, height = 40.dp)
+                    .fillMaxWidth()
+                    .size(width = 400.dp, height = 60.dp)
             ) {
                 Row(modifier = Modifier
                     .clickable { navController.navigate(ROUTE_EMPLOYEEACCOUNT) }
@@ -302,33 +304,33 @@ fun EmployeeSettingScreen(navController: NavHostController){
                     Text(
                         text = "View Profile",
                         modifier = Modifier
-                            .padding(start = 10.dp, top = 10.dp),
-                        fontSize = 15.sp,
+                            .padding(start = 10.dp, top = 18.dp),
+                        fontSize = 18.sp,
                         fontWeight = FontWeight.Bold, fontFamily = FontFamily.Default
                     )
-                    Spacer(modifier = Modifier.width(220.dp))
+                    Spacer(modifier = Modifier.width(240.dp))
 
                     IconButton(onClick = { navController.navigate(ROUTE_EMPLOYEEACCOUNT) }) { Icon(imageVector = Icons.Filled.Person, contentDescription = "changepassword")
                     }
 
                 }
 
-                Row(modifier = Modifier
-                    .clickable { showPasswordDialog=true }
-                ) {
-                    Text(
-                        text = "Change Password",
-                        modifier = Modifier
-                            .padding(start = 10.dp, top = 10.dp),
-                        fontSize = 15.sp,
-                        fontWeight = FontWeight.Bold, fontFamily = FontFamily.Default
-                    )
-                    Spacer(modifier = Modifier.width(220.dp))
-
-                    IconButton(onClick = {showPasswordDialog=true}) { Icon(imageVector = Icons.Filled.ArrowForwardIos, contentDescription = "changepassword")
-                    }
-
-                }
+//                Row(modifier = Modifier
+//                    .clickable { showPasswordDialog=true }
+//                ) {
+//                    Text(
+//                        text = "Change Password",
+//                        modifier = Modifier
+//                            .padding(start = 10.dp, top = 10.dp),
+//                        fontSize = 15.sp,
+//                        fontWeight = FontWeight.Bold, fontFamily = FontFamily.Default
+//                    )
+//                    Spacer(modifier = Modifier.width(220.dp))
+//
+//                    IconButton(onClick = {showPasswordDialog=true}) { Icon(imageVector = Icons.Filled.ArrowForwardIos, contentDescription = "changepassword")
+//                    }
+//
+//                }
             }
 
             Card (colors = CardDefaults.cardColors(
@@ -338,24 +340,25 @@ fun EmployeeSettingScreen(navController: NavHostController){
                     defaultElevation = 6.dp),
                 modifier = Modifier
                     .padding(start = 7.dp)
-                    .size(width = 400.dp, height = 50.dp)
+                    .size(width = 400.dp, height = 70.dp)
             ) {
-                Row {
+                Row(modifier = Modifier
+                    .clickable { showTermsPrivacyDialog=true}) {
                     Column {
                         Text(
                             text = "Terms and Privacy Policy",
-                            modifier = Modifier.padding(start = 5.dp, top = 5.dp),
-                            fontSize = 15.sp,
+                            modifier = Modifier.padding(start = 10.dp, top = 15.dp),
+                            fontSize = 18.sp,
                             fontWeight = FontWeight.Bold, fontFamily = FontFamily.Default
                         )
                         Text(
                             text = "Read Terms and Privacy Policy",
-                            modifier = Modifier.padding(start = 10.dp, top = 5.dp),
-                            fontSize = 10.sp,
+                            modifier = Modifier.padding(start = 15.dp, top = 5.dp),
+                            fontSize = 13.sp,
                             fontFamily = FontFamily.Monospace
                         )
                     }
-                    Spacer(modifier = Modifier.width(160.dp))
+                    Spacer(modifier = Modifier.width(110.dp))
                     IconButton(onClick = {showTermsPrivacyDialog=true}) {
                         Icon(imageVector = Icons.Filled.Info, contentDescription = "terms&conditions")
 
@@ -417,7 +420,7 @@ fun EmployeeSettingScreen(navController: NavHostController){
                 Spacer(modifier = Modifier.height(5.dp))
                 Row {
                     Text(
-                        text = "Rate Us",
+                        text = "Rate Me",
                         modifier = Modifier.
                         padding(start = 5.dp, top = 5.dp),
                         fontSize = 16.sp
@@ -478,13 +481,13 @@ fun EmployeeSettingScreen(navController: NavHostController){
                 )
                 Row {
                     Text(text = "Developed by", modifier = Modifier.padding(start = 5.dp, top= 5.dp) , color = Color.Gray)
-                    Spacer(modifier = Modifier.width(160.dp))
+                    Spacer(modifier = Modifier.width(200.dp))
                     Text(text = "Salma Sirat", fontFamily = FontFamily.Monospace, fontWeight = FontWeight.Bold,modifier = Modifier.padding(start = 5.dp, top= 5.dp))
                 }
                 Spacer(modifier = Modifier.height(10.dp))
                 Row {
                     Text(text = "Contact", modifier = Modifier.padding(start = 5.dp, top= 5.dp) , color = Color.Gray)
-                    Spacer(modifier = Modifier.width(200.dp))
+                    Spacer(modifier = Modifier.width(240.dp))
                     Text(text = "0721793739", fontFamily = FontFamily.Monospace, fontWeight = FontWeight.Bold,modifier = Modifier.padding(start = 5.dp, top= 5.dp))
                 }
             }

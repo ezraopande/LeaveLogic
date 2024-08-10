@@ -3,6 +3,7 @@ package com.leave.management.navigation
 import android.os.Build
 import androidx.annotation.RequiresApi
 import androidx.compose.runtime.Composable
+import androidx.compose.ui.Modifier
 import androidx.navigation.NavHostController
 import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
@@ -33,7 +34,7 @@ import com.leave.management.ui.screens.employee.leaves.AllMyLeaves
 @Composable
 fun AppNavHost(
                navController: NavHostController = rememberNavController(),
-               startDestination:String= ROUTE_LOGIN
+               startDestination:String= ROUTE_SPLASHSCREEN
 ) {
     CheckLoginStatus(navController)
 
