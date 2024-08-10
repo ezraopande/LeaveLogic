@@ -22,6 +22,11 @@ import androidx.compose.material.OutlinedTextField
 import androidx.compose.material.Scaffold
 import androidx.compose.material.Text
 import androidx.compose.material.TextButton
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.CalendarToday
+import androidx.compose.material.icons.filled.Email
+import androidx.compose.material.icons.filled.LocationOn
+import androidx.compose.material.icons.filled.Phone
 import androidx.compose.material3.CenterAlignedTopAppBar
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.TopAppBarDefaults
@@ -35,6 +40,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
@@ -276,12 +282,6 @@ fun EmployeeAccount(navController: NavHostController) {
                                 color = Color(0xFF666666)
                             )
 
-                            Text(
-                                text = userMobile,
-                                fontSize = 16.sp,
-                                color = Color(0xFF666666)
-                            )
-
                             Spacer(modifier = Modifier.height(16.dp))
                         }
                     }
@@ -296,27 +296,31 @@ fun EmployeeAccount(navController: NavHostController) {
                     elevation = 8.dp,
                     modifier = Modifier
                         .fillMaxWidth()
-                        .padding(horizontal = 16.dp)
                 ) {
                     Column(
-                        modifier = Modifier.padding(16.dp)
+                        modifier = Modifier.padding(16.dp),
+                        verticalArrangement = Arrangement.spacedBy(8.dp)
                     ) {
-                        Text(
-                            text = "About Me",
-                            color = Color(0xFF333333),
-                            fontSize = 18.sp,
-                            fontWeight = FontWeight.Bold
+                        com.leave.management.ui.screens.admin.TextWithIcon(
+                            label = "Email",
+                            value = userEmail,
+                            icon = Icons.Default.Email
                         )
-
-                        Spacer(modifier = Modifier.height(8.dp))
-
-                        Text(
-                            "Top notch employee in this Salma organization. The leave management service are next level here",
-                            color = Color(0xFF666666),
-                            fontSize = 14.sp
+                        com.leave.management.ui.screens.admin.TextWithIcon(
+                            label = "Mobile",
+                            value = userMobile,
+                            icon = Icons.Default.Phone
                         )
-
-                        Spacer(modifier = Modifier.height(16.dp))
+                        com.leave.management.ui.screens.admin.TextWithIcon(
+                            label = "Address",
+                            value = userAddress,
+                            icon = Icons.Default.LocationOn
+                        )
+                        com.leave.management.ui.screens.admin.TextWithIcon(
+                            label = "Date of Birth",
+                            value = userDob,
+                            icon = Icons.Default.CalendarToday
+                        )
                     }
                 }
             }
@@ -353,5 +357,34 @@ fun EmployeeAccount(navController: NavHostController) {
             }
         }
 
+    }
+}
+
+
+@Composable
+fun TextWithIcon(label: String, value: String, icon: ImageVector) {
+    Row(
+        verticalAlignment = Alignment.CenterVertically
+    ) {
+        Icon(
+            imageVector = icon,
+            contentDescription = "$label icon",
+            tint = Color(0xff6f2dc2),
+            modifier = Modifier.size(24.dp)
+        )
+        Spacer(modifier = Modifier.width(8.dp))
+        Column {
+            Text(
+                text = label,
+                fontSize = 14.sp,
+                color = Color(0xFF999999)
+            )
+            Text(
+                text = value,
+                fontSize = 16.sp,
+                color = Color(0xFF333333),
+                fontWeight = FontWeight.Medium
+            )
+        }
     }
 }

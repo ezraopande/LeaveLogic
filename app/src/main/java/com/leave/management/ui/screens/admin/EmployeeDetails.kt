@@ -27,6 +27,7 @@ import androidx.compose.material.Card
 import androidx.compose.material.CircularProgressIndicator
 import androidx.compose.material.Icon
 import androidx.compose.material.IconButton
+import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Scaffold
 import androidx.compose.material.Text
 import androidx.compose.material.TopAppBar
@@ -210,35 +211,49 @@ fun EmployeeDetailsScreen(email: String, navController: NavController) {
                         }
                     }
 
-                    //ShareEmployeeDetailsDialogue
 
                     if (showShareDialog) {
                         AlertDialog(
                             onDismissRequest = { showShareDialog = false },
-                            modifier = Modifier.width(400.dp),
-                            title = { Text(text = "Share Employee Details") },
+                            modifier = Modifier
+                                .width(360.dp)
+                                .padding(16.dp)
+                                .clip(RoundedCornerShape(12.dp))
+                                .background(Color.White, shape = RoundedCornerShape(12.dp)),
+                            title = {
+                                Text(
+                                    text = "Share Employee Details",
+                                    style = MaterialTheme.typography.h6,
+                                    color = Color.Magenta
+                                )
+                            },
                             text = {
-                                Column {
+                                Column(modifier = Modifier.padding(vertical = 8.dp)) {
                                     Text(buildAnnotatedString {
                                         append("Share the login credentials with ")
                                         withStyle(style = SpanStyle(fontWeight = FontWeight.Bold)) {
                                             append(emp.name.uppercase())
                                         }
-                                    })
-                                    Spacer(modifier = Modifier.height(15.dp))
-                                    Text(" You can share the details via Email or SMS.")
+                                    }, style = MaterialTheme.typography.body1)
+                                    Spacer(modifier = Modifier.height(12.dp))
+                                    Text(
+                                        text = "You can share the details via Email or SMS.",
+                                        style = MaterialTheme.typography.body2,
+                                        color = Color.Magenta
+                                    )
                                 }
                             },
                             confirmButton = {
                                 Row(
                                     modifier = Modifier
                                         .fillMaxWidth()
-                                        .padding(top = 8.dp),
-                                    horizontalArrangement = Arrangement.SpaceEvenly
+                                        .padding(top = 16.dp),
+                                    horizontalArrangement = Arrangement.SpaceBetween
                                 ) {
                                     Text(
                                         text = "VIA EMAIL",
-                                        color = Color.Blue,
+                                        color = Color.Magenta,
+                                        style = MaterialTheme.typography.button,
                                         textDecoration = TextDecoration.Underline,
                                         modifier = Modifier.clickable {
                                             val shareIntent = Intent(Intent.ACTION_SEND).apply {
@@ -251,10 +266,10 @@ fun EmployeeDetailsScreen(email: String, navController: NavController) {
                                             showShareDialog = false
                                         }
                                     )
-                                    Spacer(modifier = Modifier.width(5.dp))
                                     Text(
                                         text = "VIA SMS",
-                                        color = Color.Blue,
+                                        color = Color.Magenta,
+                                        style = MaterialTheme.typography.button,
                                         textDecoration = TextDecoration.Underline,
                                         modifier = Modifier.clickable {
                                             val smsIntent = Intent(Intent.ACTION_SENDTO).apply {
@@ -265,19 +280,21 @@ fun EmployeeDetailsScreen(email: String, navController: NavController) {
                                             showShareDialog = false
                                         }
                                     )
-                                    Spacer(modifier = Modifier.width(16.dp))
                                     Text(
                                         text = "CANCEL",
                                         color = Color.Red,
+                                        style = MaterialTheme.typography.button,
                                         textDecoration = TextDecoration.Underline,
                                         modifier = Modifier.clickable {
                                             showShareDialog = false
                                         }
                                     )
                                 }
+
                             },
                             dismissButton = {}
                         )
+
                     }
                 }
             }

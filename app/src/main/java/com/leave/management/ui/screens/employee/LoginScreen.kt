@@ -47,6 +47,7 @@ import androidx.compose.ui.unit.sp
 import androidx.navigation.NavHostController
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.ktx.auth
+import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.ktx.Firebase
 import com.leave.management.R
 import com.leave.management.navigation.ROUTE_ADMINLOGIN
@@ -62,14 +63,10 @@ fun LoginScreen(navController: NavHostController) {
     var email by remember { mutableStateOf("") }
     var password by remember { mutableStateOf("") }
     val auth: FirebaseAuth = Firebase.auth
+    val firestore = FirebaseFirestore.getInstance()
 
     var isLoading by remember { mutableStateOf(false) }
     var errorMessage by remember { mutableStateOf("") }
-
-    val clicked = remember { mutableStateOf(false) }
-
-    // Update the clicked state when the button is clicked
-    val updatedClicked = rememberUpdatedState(clicked.value)
 
     LaunchedEffect(Unit) {
         val loggedInUserEmail = sharedPreferences.getString("user_email", null)
@@ -88,8 +85,8 @@ fun LoginScreen(navController: NavHostController) {
             .background(Color.White)
     ) {
         Spacer(modifier = Modifier.height(150.dp))
-
         Spacer(modifier = Modifier.height(10.dp))
+
         Box(
             modifier = Modifier.fillMaxWidth(),
             contentAlignment = Alignment.Center
@@ -101,25 +98,19 @@ fun LoginScreen(navController: NavHostController) {
             )
         }
 
-        //Admin login button
         Row {
             Button(
-                onClick = { navController.navigate(ROUTE_ADMINLOGIN)
-                    // Toggle the clicked state when the button is clicked
-                    clicked.value = !updatedClicked.value},
+                onClick = { navController.navigate(ROUTE_ADMINLOGIN) },
                 modifier = Modifier
                     .size(width = 170.dp, height = 50.dp)
-                    .clickable { clicked.value = !clicked.value } // Toggle clicked state when clicked
-//                    .border(width = 3.dp, color = Color.Black, shape = RoundedCornerShape(10.dp))
                     .padding(start = 20.dp),
                 shape = RoundedCornerShape(30.dp),
                 colors = ButtonDefaults.buttonColors(
-                    Color.Transparent, // Set button background color
-                    contentColor = Color.Black // Set button text color
+                    containerColor = Color.Transparent,
+                    contentColor = Color.Black
                 ),
                 border = BorderStroke(3.dp, Color.Black)
             ) {
-
                 Text(
                     text = "Admin",
                     color = Color.Black,
@@ -128,16 +119,10 @@ fun LoginScreen(navController: NavHostController) {
                 )
             }
             Spacer(modifier = Modifier.width(2.dp))
-
-            //Employee login Button
             Button(
-                onClick = { navController.navigate(ROUTE_LOGIN)
-                    // Toggle the clicked state when the button is clicked
-                    clicked.value = !updatedClicked.value },
+                onClick = { navController.navigate(ROUTE_LOGIN) },
                 modifier = Modifier
                     .size(width = 170.dp, height = 50.dp)
-                    .clickable { clicked.value = !clicked.value } // Toggle clicked state when clicked
-//                    .border(width = 3.dp, color = Color.Black, shape = RoundedCornerShape(10.dp))
                     .padding(start = 20.dp),
                 shape = RoundedCornerShape(30.dp),
                 colors = ButtonDefaults.buttonColors(
@@ -153,8 +138,8 @@ fun LoginScreen(navController: NavHostController) {
                 )
             }
         }
-        Spacer(modifier = Modifier.height(20.dp))
 
+        Spacer(modifier = Modifier.height(20.dp))
 
         Card(
             colors = CardDefaults.cardColors(
@@ -251,13 +236,26 @@ fun LoginScreen(navController: NavHostController) {
                 try {
                     auth.signInWithEmailAndPassword(email, password).await()
 
-                    // Save email to SharedPreferences
-                    with(sharedPreferences.edit()) {
-                        putString("user_email", email)
-                        apply()
-                    }
+                    // Check if the email exists in the Firestore 'employees' collection
+                    val querySnapshot = firestore.collection("employees")
+                        .whereEqualTo("email", email)
+                        .get()
+                        .await()
 
-                    navController.navigate(ROUTE_EMPLOYEEDASHBOARD)
+                    if (!querySnapshot.isEmpty) {
+                        // Save email to SharedPreferences
+                        with(sharedPreferences.edit()) {
+                            putString("user_email", email)
+                            apply()
+                        }
+
+                        navController.navigate(ROUTE_EMPLOYEEDASHBOARD) {
+                            popUpTo(ROUTE_LOGIN) { inclusive = true }
+                        }
+                    } else {
+                        auth.signOut()
+                        Toast.makeText(context, "User not found.", Toast.LENGTH_LONG).show()
+                    }
                 } catch (e: Exception) {
                     errorMessage = e.message ?: "Login failed"
                     Toast.makeText(context, errorMessage, Toast.LENGTH_LONG).show()
@@ -274,7 +272,6 @@ fun getEmailFromPreferences(context: Context): String? {
     val sharedPreferences: SharedPreferences = context.getSharedPreferences("MyAppPrefs", Context.MODE_PRIVATE)
     return sharedPreferences.getString("user_email", null)
 }
-
 
 fun userlogout(context: Context, navController: NavHostController) {
     val sharedPreferences: SharedPreferences = context.getSharedPreferences("MyAppPrefs", Context.MODE_PRIVATE)

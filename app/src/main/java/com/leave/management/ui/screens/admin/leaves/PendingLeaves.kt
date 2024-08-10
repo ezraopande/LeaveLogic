@@ -90,7 +90,7 @@ fun PendingLeaveScreen(navController: NavHostController, userName: String) {
                                 selectedLeaveId = leaveId
                                 showRejectDialog = true
                             },
-                            userName = userName // Pass the userName parameter here
+                            userName = userName
                         )
                         Spacer(modifier = Modifier.height(8.dp))
                     }
@@ -103,14 +103,13 @@ fun PendingLeaveScreen(navController: NavHostController, userName: String) {
 
         if (showApproveDialog) {
             ShowApproveDialog(
+                context = context,
                 leaveId = selectedLeaveId,
-                comment = comment,
-                onCommentChange = { newComment -> comment = newComment },
+                userName = userName,
                 onApproveConfirmed = { success ->
                     showApproveDialog = false
                     if (success) {
-                        Toast.makeText(context, "Leave approved", Toast.LENGTH_SHORT).show()
-                        navController.navigate(ROUTE_VIEWLEAVEs)
+                        Toast.makeText(context, "Leave Approved", Toast.LENGTH_SHORT).show()
                         fetchPendingLeaves { leaves, _ ->
                             pendingLeaves = leaves ?: emptyList()
                         }
@@ -118,8 +117,7 @@ fun PendingLeaveScreen(navController: NavHostController, userName: String) {
                         Toast.makeText(context, "Failed to approve leave", Toast.LENGTH_SHORT).show()
                     }
                 },
-                onDismiss = { showApproveDialog = false },
-                userName = userName // Pass userName here
+                onDismiss = { showApproveDialog = false }
             )
         }
 
@@ -249,15 +247,14 @@ fun ShowRejectDialog(
 
 @Composable
 fun ShowApproveDialog(
+    context: Context,
     leaveId: String,
-    comment: String,
     userName: String,
-    onCommentChange: (String) -> Unit,
     onApproveConfirmed: (Boolean) -> Unit,
     onDismiss: () -> Unit
 ) {
-    val context = LocalContext.current
     var openDialog by remember { mutableStateOf(true) }
+    var comment by remember { mutableStateOf("") }
 
     if (openDialog) {
         AlertDialog(
@@ -266,50 +263,52 @@ fun ShowApproveDialog(
                 onDismiss()
             },
             title = {
-                Text("Approve Leave",
+                Text(
+                    text = "Approve Leave",
                     style = MaterialTheme.typography.h6,
                     color = MaterialTheme.colors.onSurface
                 )
             },
             text = {
-                Spacer(modifier = Modifier.height(16.dp))
                 Column {
                     Text(
-                        text = "Please provide add a comment",
+                        text = "Please Add a comment:",
                         style = MaterialTheme.typography.body1,
                         color = MaterialTheme.colors.onSurface
                     )
-
+                    Spacer(modifier = Modifier.height(16.dp))
                     OutlinedTextField(
                         value = comment,
-                        onValueChange = onCommentChange,
-                        label = { Text("Comment") }
+                        onValueChange = { comment = it },
+                        label = { Text("Comment") },
+                        modifier = Modifier.fillMaxWidth(),
+                        shape = RoundedCornerShape(8.dp),
+                        colors = TextFieldDefaults.outlinedTextFieldColors(
+                            focusedBorderColor = MaterialTheme.colors.primary,
+                            unfocusedBorderColor = MaterialTheme.colors.onSurface.copy(alpha = ContentAlpha.disabled),
+                            cursorColor = MaterialTheme.colors.primary
+                        )
                     )
                 }
             },
             confirmButton = {
-                OutlinedButton(
-
-
-
-
+                Button(
                     onClick = {
-                        if (comment.isNotBlank()) {
-
+                        if (comment.isNotEmpty()) {
                             approveLeave(leaveId, comment, userName) { success ->
                                 onApproveConfirmed(success)
                             }
                             openDialog = false
                         } else {
                             Toast.makeText(context, "Comment is required", Toast.LENGTH_SHORT).show()
-
-
                         }
                     },
-                    shape = RoundedCornerShape(50),
-                    border = BorderStroke(1.dp, MaterialTheme.colors.primary)
+                    colors = ButtonDefaults.buttonColors(
+                        backgroundColor = MaterialTheme.colors.primary
+                    ),
+                    shape = RoundedCornerShape(50)
                 ) {
-                    Text("Approve")
+                    Text("Confirm", color = Color.White)
                 }
             },
             dismissButton = {
@@ -321,14 +320,14 @@ fun ShowApproveDialog(
                     shape = RoundedCornerShape(50),
                     border = BorderStroke(1.dp, MaterialTheme.colors.primary)
                 ) {
-                    Text("Cancel")
+                    Text("Cancel", color = MaterialTheme.colors.primary)
                 }
-            }
+            },
+            backgroundColor = MaterialTheme.colors.surface,
+            shape = RoundedCornerShape(16.dp)
         )
     }
 }
-
-
 
 
 

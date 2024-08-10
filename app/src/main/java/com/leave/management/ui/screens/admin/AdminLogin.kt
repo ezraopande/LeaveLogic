@@ -56,6 +56,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavHostController
 import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.firestore.FirebaseFirestore
 import com.leave.management.R
 import com.leave.management.navigation.ROUTE_ADMINDASBOARD
 import com.leave.management.navigation.ROUTE_ADMINLOGIN
@@ -64,7 +65,6 @@ import com.leave.management.navigation.ROUTE_REGISTER
 import kotlinx.coroutines.launch
 
 @OptIn(ExperimentalMaterial3Api::class)
-
 @Composable
 fun AdminLoginScreen(navController: NavHostController) {
     val mContext = LocalContext.current
@@ -74,6 +74,7 @@ fun AdminLoginScreen(navController: NavHostController) {
     val scope = rememberCoroutineScope()
 
     val auth = FirebaseAuth.getInstance()
+    val firestore = FirebaseFirestore.getInstance()
 
     // Obtain SharedPreferences
     val sharedPreferences: SharedPreferences = mContext.getSharedPreferences("MyAppPrefs", Context.MODE_PRIVATE)
@@ -201,7 +202,6 @@ fun AdminLoginScreen(navController: NavHostController) {
                     colors = TextFieldDefaults.textFieldColors(
                         focusedIndicatorColor = Color(0xff6f2dc2),
                         containerColor = Color.Transparent
-
                     ),
                     keyboardOptions = KeyboardOptions(
                         keyboardType = KeyboardType.Password
@@ -214,8 +214,6 @@ fun AdminLoginScreen(navController: NavHostController) {
         }
         Spacer(modifier = Modifier.height(30.dp))
 
-
-
         if (isLoading) {
             CircularProgressIndicator()
         } else {
@@ -226,16 +224,42 @@ fun AdminLoginScreen(navController: NavHostController) {
                         if (email.isNotEmpty() && password.isNotEmpty()) {
                             auth.signInWithEmailAndPassword(email, password)
                                 .addOnCompleteListener { task ->
-                                    isLoading = false
                                     if (task.isSuccessful) {
-                                        // Store the email in SharedPreferences
-                                        with(sharedPreferences.edit()) {
-                                            putString("loggedInUserEmail", email)
-                                            putBoolean("isLoggedIn", true)
-                                            apply()
-                                        }
-                                        navController.navigate(ROUTE_ADMINDASBOARD)
+                                        // User authenticated, now check if the email exists in Firestore
+                                        firestore.collection("users")
+                                            .whereEqualTo("email", email) // Adjust the field name if your field is named differently
+                                            .get()
+                                            .addOnSuccessListener { querySnapshot ->
+                                                isLoading = false
+                                                if (!querySnapshot.isEmpty) {
+                                                    // Email exists, proceed to dashboard
+                                                    with(sharedPreferences.edit()) {
+                                                        putString("loggedInUserEmail", email)
+                                                        putBoolean("isLoggedIn", true)
+                                                        apply()
+                                                    }
+                                                    navController.navigate(ROUTE_ADMINDASBOARD)
+                                                } else {
+                                                    // Email does not exist in Firestore, log out the user
+                                                    auth.signOut()
+                                                    Toast.makeText(
+                                                        mContext,
+                                                        "Email not registered. Please contact support.",
+                                                        Toast.LENGTH_SHORT
+                                                    ).show()
+                                                }
+                                            }
+                                            .addOnFailureListener { e ->
+                                                isLoading = false
+                                                Log.e("FirestoreError", "Error checking email in Firestore: $e")
+                                                Toast.makeText(
+                                                    mContext,
+                                                    "Error verifying email: ${e.message}",
+                                                    Toast.LENGTH_SHORT
+                                                ).show()
+                                            }
                                     } else {
+                                        isLoading = false
                                         val errorMsg = task.exception?.message
                                         Log.e("LoginError", "Error: $errorMsg")
                                         Toast.makeText(
@@ -245,6 +269,7 @@ fun AdminLoginScreen(navController: NavHostController) {
                                         ).show()
                                     }
                                 }
+
                         } else {
                             isLoading = false
                             Toast.makeText(
@@ -260,12 +285,13 @@ fun AdminLoginScreen(navController: NavHostController) {
                     .padding(start = 20.dp)
                     .align(Alignment.CenterHorizontally),
                 shape = RoundedCornerShape(30.dp),
-                colors = ButtonDefaults.buttonColors( containerColor = Color(0xFF6650a4),
-                    contentColor = MaterialTheme.colorScheme.onPrimary)
+                colors = ButtonDefaults.buttonColors(
+                    containerColor = Color(0xFF6650a4),
+                    contentColor = MaterialTheme.colorScheme.onPrimary
+                )
             ) {
                 Text(
                     text = "Login",
-//                    color = Color.Black,
                     fontSize = 15.sp,
                     fontWeight = FontWeight.Bold
                 )
@@ -273,22 +299,23 @@ fun AdminLoginScreen(navController: NavHostController) {
         }
 
         Spacer(modifier = Modifier.height(20.dp))
-        Row {
-            Text(
-                text = "Don't have an account?",
-                color = Color.Black,
-                fontSize = 15.sp,
-                modifier = Modifier.padding(start = 30.dp)
-            )
-            Spacer(modifier = Modifier.width(10.dp))
-            Text(
-                text = "Register",
-                fontSize = 15.sp,
-                color = Color(0xFF7D5260),
-                fontWeight = FontWeight.Bold,
-                modifier = Modifier.clickable { navController.navigate(ROUTE_REGISTER) }
-            )
-        }
-        Spacer(modifier = Modifier.height(5.dp))
+//        Row {
+//            Text(
+//                text = "Don't have an account?",
+//                color = Color.Black,
+//                fontSize = 15.sp,
+//                modifier = Modifier.padding(start = 30.dp)
+//            )
+//            Spacer(modifier = Modifier.width(10.dp))
+//            Text(
+//                text = "Register",
+//                fontSize = 15.sp,
+//                color = Color(0xFF7D5260),
+//                fontWeight = FontWeight.Bold,
+//                modifier = Modifier.clickable { navController.navigate(ROUTE_REGISTER) }
+//            )
+//        }
+//        Spacer(modifier = Modifier.height(5.dp))
+
     }
 }

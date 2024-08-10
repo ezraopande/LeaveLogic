@@ -112,8 +112,8 @@ fun AllLeaves(navController: NavHostController) {
 
 @Composable
 fun LeaveItem(leave: LeaveApplication, onApprove: (String) -> Unit, onReject: (String) -> Unit, userName: String) {
-    var showApproveDialog by remember { mutableStateOf(false) }
-    var comment by remember { mutableStateOf("") }
+//    var showApproveDialog by remember { mutableStateOf(false) }
+//    var comment by remember { mutableStateOf("") }
 
     Box(
         modifier = Modifier
@@ -158,7 +158,7 @@ fun LeaveItem(leave: LeaveApplication, onApprove: (String) -> Unit, onReject: (S
                     horizontalArrangement = Arrangement.spacedBy(8.dp)
                 ) {
                     Button(
-                        onClick = { showApproveDialog = true },
+                        onClick = { onApprove(leave.id) },
                         colors = ButtonDefaults.buttonColors(backgroundColor = Color(0xFF4CAF50)),
                         shape = RoundedCornerShape(8.dp)
                     ) {
@@ -186,19 +186,7 @@ fun LeaveItem(leave: LeaveApplication, onApprove: (String) -> Unit, onReject: (S
                     }
                 }
 
-                if (showApproveDialog) {
-                    ShowApproveDialog(
-                        leaveId = leave.id,
-                        comment = comment,
-                        userName = userName, // Pass the userName parameter here
-                        onCommentChange = { newComment -> comment = newComment },
-                        onApproveConfirmed = { success ->
-                            showApproveDialog = false
-                            onApprove(leave.id)
-                        },
-                        onDismiss = { showApproveDialog = false }
-                    )
-                }
+
             }
         }
     }

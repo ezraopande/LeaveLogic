@@ -7,6 +7,7 @@ import android.os.Build
 import androidx.annotation.RequiresApi
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
@@ -68,6 +69,7 @@ import com.leave.management.navigation.ROUTE_EMPLOYEEACCOUNT
 import com.leave.management.navigation.ROUTE_EMPLOYEEDASHBOARD
 import com.leave.management.navigation.ROUTE_EMPLOYEESETTINGS
 import com.leave.management.navigation.ROUTE_MYLEAVES
+import com.leave.management.navigation.ROUTE_VIEWEMPLOYEES
 import kotlinx.coroutines.tasks.await
 import java.time.LocalTime
 
@@ -230,6 +232,7 @@ fun EmployeeDashboardScreen(navController: NavHostController,) {
                     count = leaveCount,
                     backgroundColor = Color(0xFF6200EE),
                     icon = Icons.Default.EventNote,
+                    onClick = { navController.navigate(ROUTE_MYLEAVES) }
 
 
                 )
@@ -240,6 +243,8 @@ fun EmployeeDashboardScreen(navController: NavHostController,) {
                     count = pendingLeaveCount,
                     backgroundColor = Color(0xFFDFAC61),
                     icon = Icons.Default.HourglassEmpty,
+                    onClick = { navController.navigate(ROUTE_MYLEAVES) }
+
                 )
             }
             item {
@@ -248,6 +253,7 @@ fun EmployeeDashboardScreen(navController: NavHostController,) {
                     count = approvedLeaveCount,
                     backgroundColor = Color(0xFF018786),
                     icon = Icons.Default.CheckCircle,
+                    onClick = { navController.navigate(ROUTE_MYLEAVES) }
                 )
             }
             item {
@@ -256,6 +262,7 @@ fun EmployeeDashboardScreen(navController: NavHostController,) {
                     count = rejectedLeaveCount,
                     backgroundColor = Color(0xFFE63D3D),
                     icon = Icons.Default.Close,
+                    onClick = { navController.navigate(ROUTE_MYLEAVES) }
 
                 )
             }
@@ -272,6 +279,7 @@ fun EmployeeDashboardScreen(navController: NavHostController,) {
 @Composable
 fun EmployeeDashboardCard(
     title: String,
+    onClick: () -> Unit,
     count: Comparable<*>,
     backgroundColor: Color,
     icon: ImageVector
@@ -279,7 +287,8 @@ fun EmployeeDashboardCard(
     Card(
         modifier = Modifier
             .height(150.dp)
-            .fillMaxWidth(),
+            .fillMaxWidth()
+            .clickable { onClick() },
         shape = RoundedCornerShape(16.dp),
         elevation = 10.dp,
         backgroundColor = backgroundColor
