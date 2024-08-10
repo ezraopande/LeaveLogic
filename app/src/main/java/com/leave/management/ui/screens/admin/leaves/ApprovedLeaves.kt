@@ -14,7 +14,12 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material.Icon
 import androidx.compose.material.MaterialTheme
+import androidx.compose.material.TextField
+import androidx.compose.material.TextFieldDefaults
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Search
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.CircularProgressIndicator
@@ -45,17 +50,16 @@ import kotlinx.coroutines.launch
 fun ApprovedLeaveScreen(navController: NavHostController) {
     var approvedLeaves by remember { mutableStateOf<List<LeaveApplication>>(emptyList()) }
     var isLoading by remember { mutableStateOf(true) }
+    var searchQuery by remember { mutableStateOf("") } // State to hold the search query
     val context = LocalContext.current
     val coroutineScope = rememberCoroutineScope()
 
-    // Fetch approved leaves
     LaunchedEffect(Unit) {
         coroutineScope.launch {
             fetchApprovedLeaves { leaves, error ->
                 if (error == null) {
                     approvedLeaves = leaves ?: emptyList()
                 } else {
-                    // Handle the error, e.g., show a Toast or a Snackbar
                     Toast.makeText(context, "Error fetching approved leaves: ${error.message}", Toast.LENGTH_LONG).show()
                 }
                 isLoading = false
@@ -66,38 +70,64 @@ fun ApprovedLeaveScreen(navController: NavHostController) {
     Column(
         modifier = Modifier
             .fillMaxSize()
-            .padding(bottom = 90.dp) // Optional: add padding to ensure content doesn't touch edges
+            .padding(bottom = 90.dp)
     ) {
+        // Styled Search Bar
+        TextField(
+            value = searchQuery,
+            onValueChange = { searchQuery = it },
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(16.dp)
+                .background(Color(0xFFF0F0F0), RoundedCornerShape(24.dp)) // Background and corner shape
+                .shadow(4.dp, RoundedCornerShape(24.dp)), // Add shadow for elevation
+            placeholder = { Text(text = "Search by name or email", color = Color.Gray) },
+            leadingIcon = {
+                Icon(
+                    Icons.Default.Search,
+                    contentDescription = null,
+                    tint = Color.Gray // Tint the search icon
+                )
+            },
+            singleLine = true,
+            colors = TextFieldDefaults.textFieldColors(
+                backgroundColor = Color.Transparent, // Transparent background to show custom background
+                focusedIndicatorColor = Color.Transparent, // Remove underline
+                unfocusedIndicatorColor = Color.Transparent // Remove underline
+            )
+        )
+
         if (isLoading) {
-            // Show loading indicator
             CircularProgressIndicator(
                 modifier = Modifier
                     .align(Alignment.CenterHorizontally)
-                    .padding(16.dp) // Optional: add padding around the indicator
+                    .padding(16.dp)
             )
         } else {
-            if (approvedLeaves.isEmpty()) {
+            val filteredLeaves = approvedLeaves.filter { leave ->
+                leave.applied_by.contains(searchQuery, ignoreCase = true) ||
+                        leave.email.contains(searchQuery, ignoreCase = true)
+            }
+
+            if (filteredLeaves.isEmpty()) {
                 Text(
                     text = "No approved leaves",
                     modifier = Modifier
                         .align(Alignment.CenterHorizontally)
-                        .padding(16.dp) // Optional: add padding around the text
+                        .padding(16.dp)
                 )
             } else {
-                // Display list of approved leaves
                 LazyColumn(
                     modifier = Modifier
-                        .fillMaxSize() // Ensure LazyColumn takes full available space
-                    //.padding(bottom = 100.dp) // Optional: add padding around the list items
+                        .fillMaxSize()
                 ) {
-                    items(approvedLeaves) { leave ->
+                    items(filteredLeaves) { leave ->
                         Row(
                             modifier = Modifier
                                 .fillMaxWidth()
                                 .padding(vertical = 8.dp),
                             horizontalArrangement = Arrangement.SpaceBetween
                         ) {
-                            // Display leave details
                             Box(
                                 modifier = Modifier
                                     .fillMaxWidth()
@@ -140,7 +170,6 @@ fun ApprovedLeaveScreen(navController: NavHostController) {
                                         Text(text = "Served By: ${leave.handled_by}")
                                     }
                                 }
-                                // Green ribbon
                                 Box(
                                     modifier = Modifier
                                         .align(Alignment.TopStart)
@@ -165,7 +194,6 @@ fun ApprovedLeaveScreen(navController: NavHostController) {
         Spacer(modifier = Modifier.height(100.dp))
     }
 }
-
 
 private fun fetchApprovedLeaves(onResult: (List<LeaveApplication>?, Exception?) -> Unit) {
     val db = FirebaseFirestore.getInstance()

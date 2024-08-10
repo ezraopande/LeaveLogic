@@ -12,7 +12,12 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material.Icon
 import androidx.compose.material.MaterialTheme
+import androidx.compose.material.TextField
+import androidx.compose.material.TextFieldDefaults
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Search
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.CircularProgressIndicator
@@ -40,11 +45,11 @@ import kotlinx.coroutines.launch
 
 
 
-
 @Composable
 fun RejectedLeaveScreen(navController: NavHostController) {
     var rejectedLeaves by remember { mutableStateOf<List<LeaveApplication>>(emptyList()) }
     var isLoading by remember { mutableStateOf(true) }
+    var searchQuery by remember { mutableStateOf("") }
     val context = LocalContext.current
     val coroutineScope = rememberCoroutineScope()
 
@@ -71,71 +76,103 @@ fun RejectedLeaveScreen(navController: NavHostController) {
                 modifier = Modifier.align(Alignment.Center)
             )
         } else {
-            if (rejectedLeaves.isEmpty()) {
-                Text(
-                    text = "No rejected leaves",
-                    modifier = Modifier.align(Alignment.Center)
+            Column {
+                TextField(
+                    value = searchQuery,
+                    onValueChange = { searchQuery = it },
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(16.dp)
+                        .background(Color(0xFFF0F0F0), RoundedCornerShape(24.dp)) // Background and corner shape
+                        .shadow(4.dp, RoundedCornerShape(24.dp)), // Add shadow for elevation
+                    placeholder = { Text(text = "Search by name or email", color = Color.Gray) },
+                    leadingIcon = {
+                        Icon(
+                            Icons.Default.Search,
+                            contentDescription = null,
+                            tint = Color.Gray // Tint the search icon
+                        )
+                    },
+                    singleLine = true,
+                    colors = TextFieldDefaults.textFieldColors(
+                        backgroundColor = Color.Transparent, // Transparent background to show custom background
+                        focusedIndicatorColor = Color.Transparent, // Remove underline
+                        unfocusedIndicatorColor = Color.Transparent // Remove underline
+                    )
                 )
-            } else {
-                LazyColumn(
-                    modifier = Modifier.fillMaxSize()
-                ) {
-                    items(rejectedLeaves) { leave ->
-                        Card(
-                            modifier = Modifier
-                                .fillMaxWidth()
-                                .padding(8.dp)
-                                .shadow(4.dp, RoundedCornerShape(16.dp)),
-                            shape = RoundedCornerShape(16.dp),
-                            colors = CardDefaults.cardColors(Color.White)
-                        ) {
-                            Box(
+
+                val filteredLeaves = rejectedLeaves.filter { leave ->
+                    leave.applied_by.contains(searchQuery, ignoreCase = true) ||
+                            leave.email.contains(searchQuery, ignoreCase = true)
+                }
+
+                if (filteredLeaves.isEmpty()) {
+                    Text(
+                        text = "No rejected leaves",
+                        modifier = Modifier
+                            .align(Alignment.CenterHorizontally)
+                    )
+                } else {
+                    LazyColumn(
+                        modifier = Modifier.fillMaxSize()
+                    ) {
+                        items(filteredLeaves) { leave ->
+                            Card(
                                 modifier = Modifier
                                     .fillMaxWidth()
-                                    .padding(16.dp)
+                                    .padding(8.dp)
+                                    .shadow(4.dp, RoundedCornerShape(16.dp)),
+                                shape = RoundedCornerShape(16.dp),
+                                colors = CardDefaults.cardColors(Color.White)
                             ) {
-                                Column {
-                                    AsyncImage(
-                                        model = leave.proofUrl,
-                                        contentDescription = null,
-                                        modifier = Modifier
-                                            .fillMaxWidth()
-                                            .height(200.dp)
-                                            .clip(RoundedCornerShape(8.dp))
-                                            .background(Color.Gray)
-                                    )
-                                    Spacer(modifier = Modifier.height(16.dp))
-                                    Text(
-                                        text = "By: ${leave.applied_by}, ${leave.email}",
-                                        style = MaterialTheme.typography.subtitle1.copy(fontWeight = FontWeight.Bold)
-                                    )
-                                    Spacer(modifier = Modifier.height(16.dp))
-                                    Text(
-                                        text = "Leave Type: ${leave.leaveType}",
-                                        fontWeight = FontWeight.Bold
-                                    )
-                                    Spacer(modifier = Modifier.height(4.dp))
-                                    Text(text = "From Date: ${leave.fromDate}")
-                                    Text(text = "To Date: ${leave.toDate}")
-                                    Text(text = "Number of Days: ${leave.numberOfDays}")
-                                    Text(text = "Reason: ${leave.reason}")
-                                    Text(text = "Comment: ${leave.comment}")
-                                    Text(text = "Served By: ${leave.handled_by}")
-                                }
-
                                 Box(
                                     modifier = Modifier
-                                        .align(Alignment.TopStart)
-                                        .padding(8.dp)
-                                        .background(Color.Red, shape = RoundedCornerShape(4.dp))
-                                        .padding(horizontal = 8.dp, vertical = 4.dp)
+                                        .fillMaxWidth()
+                                        .padding(16.dp)
                                 ) {
-                                    Text(
-                                        text = "Rejected",
-                                        color = Color.White,
-                                        fontWeight = FontWeight.Bold,
-                                        modifier = Modifier.align(Alignment.Center)
-                                    )
+                                    Column {
+                                        AsyncImage(
+                                            model = leave.proofUrl,
+                                            contentDescription = null,
+                                            modifier = Modifier
+                                                .fillMaxWidth()
+                                                .height(200.dp)
+                                                .clip(RoundedCornerShape(8.dp))
+                                                .background(Color.Gray)
+                                        )
+                                        Spacer(modifier = Modifier.height(16.dp))
+                                        Text(
+                                            text = "By: ${leave.applied_by}, ${leave.email}",
+                                            style = MaterialTheme.typography.subtitle1.copy(fontWeight = FontWeight.Bold)
+                                        )
+                                        Spacer(modifier = Modifier.height(16.dp))
+                                        Text(
+                                            text = "Leave Type: ${leave.leaveType}",
+                                            fontWeight = FontWeight.Bold
+                                        )
+                                        Spacer(modifier = Modifier.height(4.dp))
+                                        Text(text = "From Date: ${leave.fromDate}")
+                                        Text(text = "To Date: ${leave.toDate}")
+                                        Text(text = "Number of Days: ${leave.numberOfDays}")
+                                        Text(text = "Reason: ${leave.reason}")
+                                        Text(text = "Comment: ${leave.comment}")
+                                        Text(text = "Served By: ${leave.handled_by}")
+                                    }
+
+                                    Box(
+                                        modifier = Modifier
+                                            .align(Alignment.TopStart)
+                                            .padding(8.dp)
+                                            .background(Color.Red, shape = RoundedCornerShape(4.dp))
+                                            .padding(horizontal = 8.dp, vertical = 4.dp)
+                                    ) {
+                                        Text(
+                                            text = "Rejected",
+                                            color = Color.White,
+                                            fontWeight = FontWeight.Bold,
+                                            modifier = Modifier.align(Alignment.Center)
+                                        )
+                                    }
                                 }
                             }
                         }

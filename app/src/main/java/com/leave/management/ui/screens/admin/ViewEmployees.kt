@@ -27,10 +27,14 @@ import androidx.compose.material.Card
 import androidx.compose.material.CircularProgressIndicator
 import androidx.compose.material.Icon
 import androidx.compose.material.MaterialTheme
+import androidx.compose.material.OutlinedTextField
 import androidx.compose.material.Scaffold
 import androidx.compose.material.Text
+import androidx.compose.material.TextField
+import androidx.compose.material.TextFieldDefaults
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowForward
+import androidx.compose.material.icons.filled.Search
 import androidx.compose.material.rememberScaffoldState
 import androidx.compose.material3.CenterAlignedTopAppBar
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -76,57 +80,17 @@ data class Employees(
 )
 
 
+
 @OptIn(ExperimentalMaterial3Api::class)
-@Composable
-fun ViewEmployeesScreen(navController: NavHostController) {
-
-
-    Scaffold(
-        topBar = {
-            CenterAlignedTopAppBar(
-                title = {
-                    Column {
-                        Text(
-                            text = "Registered Employees",
-                            color = Color.White,
-                            fontSize = 20.sp,
-                            fontWeight = FontWeight.Bold,
-                            modifier = Modifier.padding(top = 10.dp)
-                        )
-                    }
-                },
-                colors = TopAppBarDefaults.centerAlignedTopAppBarColors(Color(0xff6f2dc2)),
-                modifier = Modifier
-                    .windowInsetsPadding(WindowInsets.systemBars)
-
-            )
-        },
-        bottomBar = {
-            AdminNavBar(navController = navController)
-        }
-    ) { innerPadding ->
-        Column(
-            modifier = Modifier.padding(innerPadding),
-            verticalArrangement = Arrangement.spacedBy(16.dp),
-        ) {
-
-
-            EmployeesScreen(navController)
-
-
-        }
-    }
-}
-
 @SuppressLint("UnusedMaterialScaffoldPaddingParameter")
 @Composable
-fun EmployeesScreen(navController: NavController) {
+fun ViewEmployeesScreen(navController: NavController) {
     val employees = remember { mutableStateListOf<Employees>() }
     var isLoading by remember { mutableStateOf(true) }
     var isError by remember { mutableStateOf(false) }
+    var searchQuery by remember { mutableStateOf("") }
     val scaffoldState = rememberScaffoldState()
     val coroutineScope = rememberCoroutineScope()
-
 
     LaunchedEffect(Unit) {
         loadEmployees(
@@ -147,34 +111,101 @@ fun EmployeesScreen(navController: NavController) {
 
     Scaffold(
         scaffoldState = scaffoldState,
-        content = {
-            Box(
+        topBar = {
+            CenterAlignedTopAppBar(
+                title = {
+                    Column {
+                        Text(
+                            text = "Registered Employees",
+                            color = Color.White,
+                            fontSize = 20.sp,
+                            fontWeight = FontWeight.Bold,
+                            modifier = Modifier.padding(top = 10.dp)
+                        )
+                    }
+                },
+                colors = TopAppBarDefaults.centerAlignedTopAppBarColors(Color(0xff6f2dc2)),
                 modifier = Modifier
-                    .fillMaxSize(),
-                contentAlignment = Alignment.Center
+                    .windowInsetsPadding(WindowInsets.systemBars)
+
+            )
+        },
+        content = {
+            Column(
+                modifier = Modifier
+                    .fillMaxSize()
+                    .padding(bottom = 105.dp)
             ) {
-                when {
-                    isLoading -> CircularProgressIndicator()
-                    isError -> Text("Failed to load employees")
-                    employees.isEmpty() -> Text("No employees found")
-                    else -> LazyColumn(
-                        modifier = Modifier
-                            .fillMaxSize()
-                            .padding(16.dp)
-                    ) {
-                        items(employees, key = { it.email }) { employee ->
-                            EmployeeItem(
-                                employee = employee,
-                                navController = navController
-                            )
+
+                TextField(
+                    value = searchQuery,
+                    onValueChange = { query -> searchQuery = query },
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(16.dp)
+                        .background(Color(0xFFF0F0F0), RoundedCornerShape(24.dp)) // Background and corner shape
+                        .shadow(4.dp, RoundedCornerShape(24.dp)), // Add shadow for elevation
+                    placeholder = {
+                        androidx.compose.material3.Text(
+                            text = "Search by name or email",
+                            color = Color.Gray
+                        )
+                    },
+                    leadingIcon = {
+                        Icon(
+                            Icons.Default.Search,
+                            contentDescription = null,
+                            tint = Color.Gray // Tint the search icon
+                        )
+                    },
+                    singleLine = true,
+                    colors = TextFieldDefaults.textFieldColors(
+                        backgroundColor = Color.Transparent, // Transparent background to show custom background
+                        focusedIndicatorColor = Color.Transparent, // Remove underline
+                        unfocusedIndicatorColor = Color.Transparent // Remove underline
+                    )
+                )
+
+
+                Box(
+                    modifier = Modifier.fillMaxSize(),
+                    contentAlignment = Alignment.Center
+                ) {
+                    when {
+                        isLoading -> CircularProgressIndicator()
+                        isError -> Text("Failed to load employees")
+                        employees.isEmpty() -> Text("No employees found")
+                        else -> {
+                            val filteredEmployees = employees.filter {
+                                it.name.contains(searchQuery, ignoreCase = true) ||
+                                        it.email.contains(searchQuery, ignoreCase = true) ||
+                                        it.mobilenumber.contains(searchQuery)
+                            }
+
+                            if (filteredEmployees.isEmpty()) {
+                                Text("No employees found")
+                            } else {
+                                LazyColumn(
+                                    modifier = Modifier.fillMaxSize()
+                                ) {
+                                    items(filteredEmployees, key = { it.email }) { employee ->
+                                        EmployeeItem(
+                                            employee = employee,
+                                            navController = navController
+                                        )
+                                    }
+                                }
+                            }
                         }
                     }
                 }
             }
+        },
+        bottomBar = {
+            AdminNavBar(navController = navController)
         }
     )
 }
-
 
 @Composable
 fun EmployeeItem(employee: Employees, navController: NavController) {

@@ -3,6 +3,7 @@ package com.leave.management.ui.screens.admin.leaves
 import android.content.Context
 import android.widget.Toast
 import androidx.compose.foundation.BorderStroke
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
@@ -16,10 +17,14 @@ import androidx.compose.material.AlertDialog
 import androidx.compose.material.Button
 import androidx.compose.material.ButtonDefaults
 import androidx.compose.material.ContentAlpha
+import androidx.compose.material.Icon
 import androidx.compose.material.MaterialTheme
 import androidx.compose.material.OutlinedButton
 import androidx.compose.material.OutlinedTextField
+import androidx.compose.material.TextField
 import androidx.compose.material.TextFieldDefaults
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Search
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -31,6 +36,7 @@ import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
@@ -46,13 +52,13 @@ import kotlinx.coroutines.launch
 fun PendingLeaveScreen(navController: NavHostController, userName: String) {
     var pendingLeaves by remember { mutableStateOf<List<LeaveApplication>>(emptyList()) }
     var isLoading by remember { mutableStateOf(true) }
+    var searchQuery by remember { mutableStateOf("") }  // State for search query
     val context = LocalContext.current
     val coroutineScope = rememberCoroutineScope()
 
     var showRejectDialog by remember { mutableStateOf(false) }
     var showApproveDialog by remember { mutableStateOf(false) }
     var selectedLeaveId by remember { mutableStateOf("") }
-    var comment by remember { mutableStateOf("") }
 
     // Fetch pending leaves
     LaunchedEffect(Unit) {
@@ -65,21 +71,59 @@ fun PendingLeaveScreen(navController: NavHostController, userName: String) {
         }
     }
 
+    // Filtered leaves based on search query
+    val filteredLeaves = pendingLeaves.filter { leave ->
+        leave.applied_by.contains(searchQuery, ignoreCase = true) ||
+                leave.email.contains(searchQuery, ignoreCase = true)
+    }
+
     Column(
         modifier = Modifier
             .fillMaxSize()
             .padding(16.dp)
     ) {
+        // Search Bar
+        TextField(
+            value = searchQuery,
+            onValueChange = { query -> searchQuery = query },
+            modifier = Modifier
+                .fillMaxWidth()
+                .background(
+                    Color(0xFFF0F0F0),
+                    RoundedCornerShape(24.dp)
+                ) // Background and corner shape
+                .shadow(4.dp, RoundedCornerShape(24.dp)), // Add shadow for elevation
+            placeholder = { Text(text = "Search by name or email", color = Color.Gray) },
+            leadingIcon = {
+                Icon(
+                    Icons.Default.Search,
+                    contentDescription = null,
+                    tint = Color.Gray // Tint the search icon
+                )
+            },
+            singleLine = true,
+            colors = TextFieldDefaults.textFieldColors(
+                backgroundColor = Color.Transparent, // Transparent background to show custom background
+                focusedIndicatorColor = Color.Transparent, // Remove underline
+                unfocusedIndicatorColor = Color.Transparent // Remove underline
+            )
+        )
+        Spacer(modifier = Modifier.height(15.dp))
+
         if (isLoading) {
             CircularProgressIndicator(modifier = Modifier.align(Alignment.CenterHorizontally))
         } else {
-            if (pendingLeaves.isEmpty()) {
-                Text(text = "No pending leaves", modifier = Modifier.align(Alignment.CenterHorizontally))
+            if (filteredLeaves.isEmpty()) {
+
+                Text(
+                    text = "No pending leaves",
+                    modifier = Modifier
+                        .align(Alignment.CenterHorizontally))
             } else {
                 LazyColumn(
                     modifier = Modifier.weight(1f)
                 ) {
-                    items(pendingLeaves) { leave ->
+                    items(filteredLeaves) { leave ->
                         LeaveItem(
                             leave = leave,
                             onApprove = { leaveId ->
@@ -95,8 +139,6 @@ fun PendingLeaveScreen(navController: NavHostController, userName: String) {
                         Spacer(modifier = Modifier.height(8.dp))
                     }
                 }
-
-
                 Spacer(modifier = Modifier.height(100.dp))
             }
         }
@@ -158,8 +200,6 @@ private fun fetchPendingLeaves(onResult: (List<LeaveApplication>?, Exception?) -
             onResult(null, exception)
         }
 }
-
-
 
 @Composable
 fun ShowRejectDialog(
