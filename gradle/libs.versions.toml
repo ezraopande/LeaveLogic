@@ -3,6 +3,7 @@ accompanistPager = "0.23.1"
 agp = "8.5.0"
 appcompat = "1.7.0"
 coilCompose = "2.7.0"
+composeCharts = "0.6.0"
 constraintlayoutCompose = "1.0.1"
 kotlin = "1.9.0"
 coreKtx = "1.13.1"
@@ -17,6 +18,7 @@ material = "1.12.0"
 material3 = "2."
 material3Version = "1.2.1"
 materialIconsCore = "1.6.8"
+mpandroidchart = "v3.1.0"
 navigationCompose = "2.7.7"
 firebaseAuthKtx = "23.0.0"
 firebaseStorageKtx = "21.0.0"
@@ -45,6 +47,7 @@ androidx-material3-v121 = { module = "androidx.compose.material3:material3", ver
 androidx-navigation-compose = { module = "androidx.navigation:navigation-compose", version.ref = "navigationCompose" }
 androidx-ui-util = { module = "androidx.compose.ui:ui-util", version.ref = "uiUtil" }
 coil-compose = { module = "io.coil-kt:coil-compose", version.ref = "coilCompose" }
+compose-charts = { module = "com.github.Amit-Kumar:compose-charts", version.ref = "composeCharts" }
 junit = { group = "junit", name = "junit", version.ref = "junit" }
 androidx-junit = { group = "androidx.test.ext", name = "junit", version.ref = "junitVersion" }
 androidx-espresso-core = { group = "androidx.test.espresso", name = "espresso-core", version.ref = "espressoCore" }
@@ -65,6 +68,7 @@ kotlinx-serialization-json = { module = "org.jetbrains.kotlinx:kotlinx-serializa
 material = { module = "com.google.android.material:material", version.ref = "material" }
 material3 = { module = "androidx.compose.material3:material3", version.ref = "material3" }
 androidx-material3-android = { group = "androidx.compose.material3", name = "material3-android", version.ref = "material3Android" }
+mpandroidchart = { module = "com.github.PhilJay:MPAndroidChart", version.ref = "mpandroidchart" }
 ui = { module = "androidx.compose.ui:ui", version.ref = "ui" }
 ui-test-junit4 = { module = "androidx.compose.ui:ui-test-junit4", version.ref = "uiTestJunit4" }
 ui-test-manifest = { module = "androidx.compose.ui:ui-test-manifest", version.ref = "uiTestManifest" }

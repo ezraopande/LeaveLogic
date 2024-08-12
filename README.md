@@ -12,11 +12,13 @@ Welcome to LeaveLogic, an Employee Leave Management App built with Kotlin, Jetpa
 ### 2. Employee Registration and Management
 - Register new employees with ease.
 - Admins can manage employee details and oversee their profiles.
+- Search Functionality: Admins can search for employees by name or employee email.
 
 ### 3. Leave Management
 - Employees can submit leave requests.
 - Admins can view and manage leave requests, including approving or rejecting them.
 - View leave statuses: Approved, Rejected, or Pending.
+- Search Functionality: Admins can search for leave requests by employee name, leave type, or email.
 
 ### 4. Leave Statistics
 - **Admin Dashboard:** Displays leave statistics for all employees, including total leave taken, leave balance, and pending requests.
